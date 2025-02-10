@@ -5,10 +5,12 @@ import VgroupsList from './VgroupsList.vue'
 import ModalPaid from './ModalPaid.vue'
 import { BackendResponse } from '@/types/types';
 import { onMounted, reactive } from 'vue';
+import LogoutButton from './LogoutButton.vue';
 
 const props = defineProps<{
   user: BackendResponse
 }>()
+const emit = defineEmits(['logout']);
 const { account, agreements, vgroups } = props.user
 
 const payment = reactive({
@@ -21,6 +23,10 @@ function closePayNotification() {
   payment.status = false,
   payment.amount = null,
   payment.paymentId = null
+}
+
+function handleLogout() {
+  emit('logout')
 }
 
 onMounted(() => {
@@ -37,7 +43,10 @@ onMounted(() => {
 
 <template>
   <section>
-    <h1>Личный кабинет</h1>
+    <div class="heading">
+      <h1>Личный кабинет</h1>
+      <logout-button @logout="handleLogout"></logout-button>
+    </div>
     <modal-paid :payment-details="payment" v-if="payment.status" @closeModal="closePayNotification"></modal-paid>
     <account-detailed v-if="account" :account="account" />
     <agreement-detailed v-if="agreements" :agreement="agreements" :account="account"/>
@@ -48,6 +57,18 @@ onMounted(() => {
 <style scoped>
   section {
     padding: clamp(20px, 1vw + 1rem, 40px);
+  }
+
+  .heading {
+    margin-bottom: clamp(1.5rem, 2vw, 2.5rem);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  h1 {
+    margin: 0;
   }
 </style>
 

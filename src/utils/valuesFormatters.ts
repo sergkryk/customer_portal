@@ -31,7 +31,7 @@ export function addressFormatter(string: string) {
     apartment,
     apartment2,
     apartment3,
-    postalCode] = parts
+    postalCode] = trimmed
 
-  return `${settlement}, ${street}, ${building}${apartment ? ', ' + apartment : ""}`
+  return `${city ? city : settlement}, ${street}, ${building}${apartment ? ', ' + apartment : ""}`
 }

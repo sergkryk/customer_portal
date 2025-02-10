@@ -18,11 +18,16 @@ function loginHandler(data: BackendResponse) {
   }
 }
 
+function logoutHandler() {
+  document.cookie = "sessnum=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+  isAuthenticated.value = false
+}
+
 </script>
 
 <template>
   <div class="container">
-    <portal-main v-if="isAuthenticated" :user="user"></portal-main>
+    <portal-main v-if="isAuthenticated" :user="user" @logout="logoutHandler"></portal-main>
     <portal-login v-else @login="loginHandler"></portal-login>
   </div>
 </template>
