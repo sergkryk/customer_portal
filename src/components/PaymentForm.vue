@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 import { currencyFormatter } from '@/utils/valuesFormatters'
 
-const URLtoPayment = 'http://localhost:3002/payment'; // development
-// const URLtoPayment = 'http://127.0.0.1:3002/payment';
+// const URLtoPayment = 'http://localhost:3002/payment'; // development
+const URLtoPayment = 'http://127.0.0.1:3002/billing/payment';
 
 const props = defineProps<{
   agreement: any
