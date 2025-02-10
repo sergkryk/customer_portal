@@ -1,0 +1,11 @@
+@use './normalize' as *;
+
+// Global
+//---------------------------------
+@use './global/variables' as *;
+@use './global/fonts.scss' as *;
+@use './global/typography' as *;
+@use './global/utils' as *;
+@use './global/reset' as *;
+@use './global/container' as *;
+// @import './global/headings';
