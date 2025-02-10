@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 // const address: URL = new URL('http://localhost:3002/client'); // dev
-const address: URL = new URL('http://127.0.0.1:3002/billing/client'); // prod
+const address: URL = new URL('https://chernuhino.ru/billing/client'); // prod
 const requestOptions: RequestInit = {
     credentials: "include", // This is crucial to send cookies
     headers: {
