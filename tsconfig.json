@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+      "target": "esnext",                // Целевой стандарт JavaScript
+      "module": "esnext",                // Используем ESNext для модулей
+      "moduleResolution": "node",        // Разрешение модулей как в Node.js
+      "baseUrl": ".",                    // This is crucial
+      "paths": {
+        "@/*": ["src/*"]                  // Maps '@' to the 'src' folder
+      },
+      "strict": true,                    // Включаем строгую типизацию
+      "esModuleInterop": true,           // Для совместимости с CommonJS
+      "skipLibCheck": true,              // Пропускаем проверку библиотек для ускорения компиляции
+      "forceConsistentCasingInFileNames": true,
+      "isolatedModules": true
+    },
+    "include": ["src/**/*"],             // Путь к исходным файлам
+    "exclude": ["node_modules"]          // Исключаем папку node_modules
+  }

@@ -3,8 +3,8 @@ import { currencyFormatter } from '@/utils/valuesFormatters';
 const props = defineProps<{
   paymentDetails: {
     status: boolean,
-    amount: number,
-    paymentId: number
+    amount: string | null,
+    paymentId: string | null
   }
 }>()
 
@@ -19,7 +19,7 @@ function handleClick() {
 <template>
   <div class="modal-overlay">
     <div class="modal">
-      <p>Платеж с номером {{ props.paymentDetails.paymentId }} на сумму {{ currencyFormatter.format(props.paymentDetails.amount / 100) }} поступил на ваш счёт</p>
+      <p>Платеж с номером {{ props.paymentDetails.paymentId }} на сумму {{ currencyFormatter.format(Number(props.paymentDetails.amount) / 100) }} поступил на ваш счёт</p>
       <button @click="handleClick" class="close-btn">Закрыть</button>
     </div>
   </div>

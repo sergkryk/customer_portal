@@ -1,26 +1,31 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-const address: URL = new URL('http://localhost:3002/client'); // dev
-// const address: URL = new URL('https://chernuhino.ru/billing/client'); // prod
+//request url
+const address: URL = new URL(import.meta.env.VITE_API_URL+'/client' || 'http://localhost:3002/client')
+// request params
 const requestOptions: RequestInit = {
     credentials: "include", // This is crucial to send cookies
     headers: {
         "Content-Type": "application/json"
     },
 }
+// defines emit
 const emit = defineEmits(['login']);
+// reactive variables for form data
 const login = ref('')
 const password = ref('')
+// reactive variables for form data validation
 const loginValidationMessage = ref('')
 const passwordValidationMessage = ref('')
+// flag to hide content while loading the page
 const isLoading = ref<boolean>(true)
-
+// declares request interface
 interface HttpRequestPayload {
     url?: URL
     method?: 'GET' | 'POST'
     body?: Record<string, any>
 }
-
+// makes requests
 async function makeHttpRequest(payload?: HttpRequestPayload): Promise<Record<string, any> | null> {
     const { url = address, method = 'GET', body } = payload || {}
     const options = {
@@ -37,27 +42,38 @@ async function makeHttpRequest(payload?: HttpRequestPayload): Promise<Record<str
     }
     if (response.status === 401) {
         alert("Не уадлось распознать введенные логин или пароль!")
+        return null
     } else {
         return null
     }
 }
+// handles user authentikation
 async function authenticateUser(): Promise<void> {
+    // checks login
     if (!login.value) {
         checkLogin()
         return
     }
+    // checks password
     if (!password.value) {
         checkPassword()
         return
     }
+    // autofills prefix for asknet users
+    if (login.value.match(/^[1-5]\d{3}$/)) {
+        login.value = `user_${login.value}`
+    }
+    // groups credentials
     const userCredentials = {
         login: login.value,
         password: password.value
     }
+    //sends login request
     const data = await makeHttpRequest({
         method: 'POST',
         body: userCredentials
     })
+    // if ok, emits login event and sends login data to parent component
     emit('login', data)
 }
 function checkLogin(): void {
@@ -78,6 +94,7 @@ function checkPassword(): void {
         passwordValidationMessage.value = ''
     }
 }
+// checks on mount if user is already logged in
 async function isUserAuthenticated(): Promise<void> {
     if (document.cookie.includes('sessnum')) {
         const data = await makeHttpRequest()

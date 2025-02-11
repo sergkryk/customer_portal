@@ -7,45 +7,64 @@ import { BackendResponse } from '@/types/types';
 import { onMounted, reactive } from 'vue';
 import LogoutButton from './LogoutButton.vue';
 
-const props = defineProps<{
-  user: BackendResponse
-}>()
+const props = defineProps<{ user: BackendResponse }>()
 const emit = defineEmits(['logout']);
+
+export interface PaymentUrlQuery {
+  status: boolean,
+  amount: string | null,
+  paymentId: string | null
+}
+
+function isPaymentUrlQuery(candidate: any): candidate is PaymentUrlQuery {
+  // Check if 'Success', 'Amount', and 'PaymentId' exist in the URLSearchParams
+  return (
+    candidate instanceof URLSearchParams &&
+    candidate.has('Success') &&
+    candidate.has('Amount') &&
+    candidate.has('PaymentId') &&
+    typeof candidate.get('Success') === 'string' && // `get` returns a string
+    typeof candidate.get('Amount') === 'string' &&
+    typeof candidate.get('PaymentId') === 'string'
+  );
+}
+
 const { account, agreements, vgroups } = props.user
 
-const payment = reactive({
+const payment: PaymentUrlQuery = reactive({
   status: false,
   amount: null,
   paymentId: null
 })
 
-function closePayNotification() {
+function closePayNotification(): void {
   payment.status = false,
     payment.amount = null,
     payment.paymentId = null
 }
 
-function handleLogout() {
-  emit('logout')
+function showPaymentNotification(urlParams: URLSearchParams): void {
+  if (isPaymentUrlQuery(urlParams)) {
+    payment.amount = urlParams.get('Amount')
+    payment.status = Boolean(urlParams.get('Success'))
+    payment.paymentId = urlParams.get('PaymentId')
+    window.history.replaceState({}, '', window.location.pathname);
+  }
 }
 
 onMounted(() => {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  if (['Success', 'Amount', 'PaymentId'].every(el => urlParams.has(el))) {
-    payment.amount = urlParams.get('Amount')
-    payment.status = Boolean(urlParams.get('Success'))
-    payment.paymentId = urlParams.get('PaymentId')
-    window.history.replaceState({}, '', window.location.pathname);
-  };
+  showPaymentNotification(urlParams)
 });
 </script>
+
 
 <template>
   <section>
     <div class="heading">
       <h1>Личный кабинет</h1>
-      <logout-button @logout="handleLogout"></logout-button>
+      <logout-button @logout="emit('logout')"></logout-button>
     </div>
     <div class="wrapper">
       <account-detailed v-if="account" :account="account" />

@@ -2,13 +2,13 @@
 import { reactive, ref } from 'vue'
 import PortalMain from './components/PortalMain.vue'
 import PortalLogin from './components/PortalLogin.vue'
-import { BackendResponse } from './types/types';
+import { Account, Agreement, BackendResponse, Vgroup, VgroupAddress } from './types/types';
 
 const isAuthenticated = ref(false);
 const user = reactive<BackendResponse>({
-  account: null,
-  agreements: null,
-  vgroups: null
+  account: {} as Account,
+  agreements: {} as Agreement,
+  vgroups: {vgroup: {} as Vgroup, addresses: [] as VgroupAddress[]}
 })
 
 function loginHandler(data: BackendResponse) {

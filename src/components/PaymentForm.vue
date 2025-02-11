@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { currencyFormatter } from '@/utils/valuesFormatters'
+import { Agreement } from '@/types/types';
 
-const URLtoPayment = 'http://localhost:3002/payment'; // development
-// const URLtoPayment = 'https://chernuhino.ru/billing/payment';
-
-const props = defineProps<{
-  agreement: any
-}>()
+const props = defineProps<{ agreement: Agreement }>()
+//request url
+const apiUrl: URL = new URL(import.meta.env.VITE_API_URL+'/payment' || 'http://localhost:3002/payment')
 
 const { agrmid, operid } = props.agreement
 // Reactive form data
@@ -25,7 +23,7 @@ async function handleSubmit(e: Event) {
       Amount: amount.value,
     }
 
-    const response = await fetch(URLtoPayment, {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -45,7 +43,7 @@ async function handleSubmit(e: Event) {
 }
 
 function validateAmount() {
-  if (amount.value < 100 || amount.value > 10000) {
+  if (amount.value !== null && (amount.value < 100 || amount.value > 10000)) {
     amountValidationMessage.value = `Сумма платежа должна быть от ${currencyFormatter.format(100)} до ${currencyFormatter.format(10000)}`
     isInvalid.value = true
   } else {
@@ -55,7 +53,7 @@ function validateAmount() {
 }
 
 function removeValidationAlert() {
-  if (amount.value < 100 || amount.value > 10000) {
+  if (amount.value !== null && (amount.value < 100 || amount.value > 10000)) {
     amount.value = null
     isInvalid.value = false
   }
@@ -87,17 +85,10 @@ function removeValidationAlert() {
 </template>
 
 <style scoped lang="scss">
-/* Block styling */
 .payment-form {
   --basis: clamp(1rem, 2vw, 1.5rem);
   width: 100%;
-  // padding: calc(var(--basis)*1.2);
-  // background-color: #fff;
-  // border-radius: 8px;
-  // box-shadow: var(--box-shadow);
 }
-
-/* Element: Label */
 .payment-form__label {
   display: block;
   margin: 0 0 calc(var(--basis)*.7) 0;
@@ -107,8 +98,6 @@ function removeValidationAlert() {
   font-weight: 500;
   font-style: italic;
 }
-
-/* Element: Input field */
 .payment-form__input {
   width: 100%;
   padding: calc(var(--basis)*.6);
@@ -126,8 +115,6 @@ function removeValidationAlert() {
     color: var(--error-color);
   }
 }
-
-/* Element: Validation message */
 .payment-form__validation-message {
   color: var(--error-color);
   font-size: calc(var(--basis)*.9);
@@ -137,13 +124,9 @@ function removeValidationAlert() {
   font-weight: 500;
   font-style: italic;
 }
-
-/* Element: Hidden fields (inputs) */
 .payment-form__hidden-fields {
   display: none;
 }
-
-/* Element: Submit button */
 .payment-form__submit-btn {
   background-color: var(--color-violet);
   color: white;
@@ -155,7 +138,6 @@ function removeValidationAlert() {
   width: 100%;
   transition: background-color var(--default-transition);
 }
-
 .payment-form__submit-btn:hover {
   background-color: var(--color-violet-hover);
 }

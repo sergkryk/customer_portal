@@ -1,13 +1,9 @@
 <script setup lang="ts">
 const emit = defineEmits(['logout']);
-
-function handleClick() {
-    emit('logout');
-}
 </script>
 
 <template>
-  <button type="button" class="logout-btn" @click="handleClick">
+  <button type="button" class="logout-btn" @click="emit('logout')">
     <svg 
       xmlns="http://www.w3.org/2000/svg" 
       viewBox="0 0 24 24" 
