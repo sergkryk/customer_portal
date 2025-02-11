@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-// const address: URL = new URL('http://localhost:3002/client'); // dev
-const address: URL = new URL('https://chernuhino.ru/billing/client'); // prod
+const address: URL = new URL('http://localhost:3002/client'); // dev
+// const address: URL = new URL('https://chernuhino.ru/billing/client'); // prod
 const requestOptions: RequestInit = {
     credentials: "include", // This is crucial to send cookies
     headers: {
@@ -42,6 +42,14 @@ async function makeHttpRequest(payload?: HttpRequestPayload): Promise<Record<str
     }
 }
 async function authenticateUser(): Promise<void> {
+    if (!login.value) {
+        checkLogin()
+        return
+    }
+    if (!password.value) {
+        checkPassword()
+        return
+    }
     const userCredentials = {
         login: login.value,
         password: password.value
@@ -62,7 +70,9 @@ function checkLogin(): void {
     }
 }
 function checkPassword(): void {
-    if (password.value.length < 6) {
+    if (password.value.length === 0) {
+        passwordValidationMessage.value = 'Ввод не может быть пустым'
+    } else if (password.value.length < 6) {
         passwordValidationMessage.value = 'Длина пароля должна быть не менее 6 символов'
     } else {
         passwordValidationMessage.value = ''
@@ -84,10 +94,10 @@ onMounted(async () => {
     <section v-if="!isLoading" class="login">
         <div class="login__container">
             <h1 class="login__title">Вход в личный кабинет</h1>
-            <p class="login__text">Введите ваши учётные данные для входа</p>
+            <p class="login__text">Введите данные для входа</p>
             <form class="login__form" @submit.prevent="authenticateUser">
                 <div class="login__input" :class="{ 'login__input--invalid': loginValidationMessage }">
-                    <label for="login">Лицевой счёт или логин</label>
+                    <label for="login">Лицевой счёт или логин абонента</label>
                     <input id="login" placeholder="Логин" name="login" v-model="login" @input="checkLogin">
                     <p v-if="loginValidationMessage">{{ loginValidationMessage }}</p>
                 </div>
@@ -105,7 +115,7 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 .login {
-    --size: clamp(16px, 4vw, 32px);
+    --size: clamp(16px, 2vw, 32px);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -114,22 +124,24 @@ onMounted(async () => {
 
 .login__container {
     background-color: white;
-    padding: calc(var(--size)*1.1) calc(var(--size)*1.2);
+    padding: calc(var(--size)*1.5) calc(var(--size)*1.5);
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: clamp(400px, 75vw, 1024px);
+    max-width: clamp(400px, 40vw, 640px);
 }
 
 .login__title {
-    margin: 0 0 calc(var(--size)*1) 0;
+    margin: 0 0 calc(var(--size)*.5) 0;
     font-size: calc(var(--size)*1.4);
     color: var(--font-color);
 }
 
 .login__text {
-    margin: 0 0 calc(var(--size)*0.8) 0;
+    margin: 0 0 calc(var(--size)*0.5) 0;
     font-size: calc(var(--size)*0.8);
+    line-height: calc(var(--size)*1);
+    color: var(--font-color-light);
 }
 
 .login__input {
@@ -188,7 +200,11 @@ onMounted(async () => {
 
 button.login__button {
     width: 100%;
+    padding: calc(var(--size)*.7);
 
     text-transform: lowercase;
+    font-size: calc(var(--size)*.9);
+    line-height: calc(var(--font-size)*1);
+    font-weight: 500;
 }
 </style>

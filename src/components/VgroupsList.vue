@@ -11,8 +11,10 @@ const props = defineProps<{
 <template>
     <div>
         <h2>Учётные записи связанные с договором</h2>
-        <div v-for="(vgroup, index) in vgroups" :key="index">
-            <vgroup-detailed :vgroup="vgroup" />
+        <div class="wrapper">
+            <div v-for="(vgroup, index) in vgroups" :key="index">
+                <vgroup-detailed :vgroup="vgroup" />
+            </div>
         </div>
     </div>
 </template>
@@ -26,6 +28,12 @@ h2 {
     line-height: calc(var(--size)*1.6);
     color: var(--header-dark-text);
     text-align: center;
-    
+
+}
+
+.wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    grid-gap: 10px;
 }
 </style>

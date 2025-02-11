@@ -21,8 +21,8 @@ const payment = reactive({
 
 function closePayNotification() {
   payment.status = false,
-  payment.amount = null,
-  payment.paymentId = null
+    payment.amount = null,
+    payment.paymentId = null
 }
 
 function handleLogout() {
@@ -33,10 +33,10 @@ onMounted(() => {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   if (['Success', 'Amount', 'PaymentId'].every(el => urlParams.has(el))) {
-      payment.amount = urlParams.get('Amount')
-      payment.status = Boolean(urlParams.get('Success'))
-      payment.paymentId = urlParams.get('PaymentId')
-      window.history.replaceState({}, '', window.location.pathname);
+    payment.amount = urlParams.get('Amount')
+    payment.status = Boolean(urlParams.get('Success'))
+    payment.paymentId = urlParams.get('PaymentId')
+    window.history.replaceState({}, '', window.location.pathname);
   };
 });
 </script>
@@ -47,29 +47,33 @@ onMounted(() => {
       <h1>Личный кабинет</h1>
       <logout-button @logout="handleLogout"></logout-button>
     </div>
-    <modal-paid :payment-details="payment" v-if="payment.status" @closeModal="closePayNotification"></modal-paid>
-    <account-detailed v-if="account" :account="account" />
-    <agreement-detailed v-if="agreements" :agreement="agreements" :account="account"/>
+    <div class="wrapper">
+      <account-detailed v-if="account" :account="account" />
+      <agreement-detailed v-if="agreements" :agreement="agreements" :account="account" />
+    </div>
     <vgroups-list v-if="vgroups" :vgroups="vgroups" />
+    <modal-paid :payment-details="payment" v-if="payment.status" @closeModal="closePayNotification"></modal-paid>
   </section>
 </template>
 
 <style scoped>
-  section {
-    padding: clamp(20px, 1vw + 1rem, 40px);
-  }
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  grid-gap: 20px;
+}
 
-  .heading {
-    margin-bottom: clamp(1.5rem, 2vw, 2.5rem);
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
+.heading {
+  padding: clamp(1rem, 2vw, 2rem) 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  h1 {
-    margin: 0;
-  }
+h1 {
+  margin: 0;
+}
 </style>
 
 <!-- 

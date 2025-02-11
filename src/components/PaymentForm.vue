@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 import { currencyFormatter } from '@/utils/valuesFormatters'
 
-// const URLtoPayment = 'http://localhost:3002/payment'; // development
-const URLtoPayment = 'https://chernuhino.ru/billing/payment';
+const URLtoPayment = 'http://localhost:3002/payment'; // development
+// const URLtoPayment = 'https://chernuhino.ru/billing/payment';
 
 const props = defineProps<{
   agreement: any
@@ -82,7 +82,7 @@ function removeValidationAlert() {
     </div>
 
     <!-- Submit button -->
-    <button type="submit" class="payment-form__submit-btn">Оплатить</button>
+    <button type="submit" class="payment-form__submit-btn">Пополнить</button>
   </form>
 </template>
 

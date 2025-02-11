@@ -30,42 +30,42 @@ const payAmountWithDiscount = computed(() => {
 
 <template>
     <div class="portal">
-    <h2 class="portal__title">Учетная запись № {{ vgid }}</h2>
-    <ul class="portal__list">
-        <li class="portal__item">
-            <h3 class="portal__item-title">Адрес подключения учётной записи</h3>
-            <p class="portal__item-content">{{ addressFormatter(addresses[0]['address']) }}</p>
-        </li>
-        <li class="portal__item">
-            <h3 class="portal__item-title">Текущий статус учетной записи</h3>
-            <p class="portal__item-content">{{ status }}</p>
-        </li>
-        <li class="portal__item">
-            <h3 class="portal__item-title">Тариф учетной записи</h3>
-            <p class="portal__item-content">{{ tarifdescr }}</p>
-        </li>
-        <li class="portal__item">
-            <h3 class="portal__item-title">Скорость доступа к сети Интернет</h3>
-            <p class="portal__item-content">до {{ curshape/1000 }} Мбит/с</p>
-        </li>
-        <li class="portal__item">
-            <h3 class="portal__item-title">Абонплата по тарифу</h3>
-            <p class="portal__item-content">{{ currencyFormatter.format(servicerent) }}</p>
-        </li>
-        <li class="portal__item">
-            <h3 class="portal__item-title">Сумма абонплаты с учетом скидки</h3>
-            <p class="portal__item-content">{{ currencyFormatter.format(payAmountWithDiscount) }}</p>
-        </li>
-        <li class="portal__item">
-            <h3 class="portal__item-title">Тип подключения к Интернету</h3>
-            <p class="portal__item-content">{{ agentdescr }}</p>
-        </li>
-        <li class="portal__item">
-            <h3 class="portal__item-title">Логин для подключения к Интернету</h3>
-            <p class="portal__item-content">{{ login }}</p>
-        </li>
-    </ul>
-</div>
+        <h2 class="portal__title">Учетная запись № {{ vgid }}</h2>
+        <ul class="portal__list">
+            <li class="portal__item">
+                <h3 class="portal__item-title">Адрес подключения учётной записи</h3>
+                <p class="portal__item-content">{{ addressFormatter(addresses[0]['address']) }}</p>
+            </li>
+            <li class="portal__item">
+                <h3 class="portal__item-title">Текущий статус учетной записи</h3>
+                <p class="portal__item-content">{{ status }}</p>
+            </li>
+            <li class="portal__item">
+                <h3 class="portal__item-title">Тариф учетной записи</h3>
+                <p class="portal__item-content">{{ tarifdescr }}</p>
+            </li>
+            <li class="portal__item">
+                <h3 class="portal__item-title">Скорость доступа к сети Интернет</h3>
+                <p class="portal__item-content">до {{ curshape / 1000 }} Мбит/с</p>
+            </li>
+            <li class="portal__item">
+                <h3 class="portal__item-title">Абонплата по тарифу</h3>
+                <p class="portal__item-content">{{ currencyFormatter.format(servicerent) }}</p>
+            </li>
+            <li class="portal__item">
+                <h3 class="portal__item-title">Сумма абонплаты с учетом скидки</h3>
+                <p class="portal__item-content">{{ currencyFormatter.format(payAmountWithDiscount) }}</p>
+            </li>
+            <li class="portal__item">
+                <h3 class="portal__item-title">Тип подключения к Интернету</h3>
+                <p class="portal__item-content">{{ agentdescr }}</p>
+            </li>
+            <li class="portal__item">
+                <h3 class="portal__item-title">Логин для подключения к Интернету</h3>
+                <p class="portal__item-content">{{ login }}</p>
+            </li>
+        </ul>
+    </div>
 </template>
 
 <style scoped lang="scss">
