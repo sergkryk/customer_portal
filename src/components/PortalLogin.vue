@@ -177,7 +177,8 @@ onMounted(async () => {
         padding: calc(var(--size)*0.6);
         border-radius: 4px;
         border: 1px solid #ccc;
-        font-size: calc(var(--size)*0.8);
+        font-size: calc(var(--size)*1);
+        line-height: calc(var(--size)*1.2);
 
         outline: none;
 
