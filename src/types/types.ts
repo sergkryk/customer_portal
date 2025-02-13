@@ -40,8 +40,14 @@ export interface Vgroup {
     vgid: number
 }
 
+export interface VgroupFull {
+    vgroup: Vgroup, 
+    addresses: VgroupAddress[], 
+    service: { rentperiod: number }
+}
+
 export interface BackendResponse {
     account: Account,
     agreements: Agreement,
-    vgroups: {vgroup: Vgroup, addresses: VgroupAddress[]}
+    vgroups: VgroupFull[]
 }

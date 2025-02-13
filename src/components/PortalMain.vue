@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AccountDetailed from './AccountDetailed.vue'
 import AgreementDetailed from './AgreementDetailed.vue'
+import FinanceSummary from './FinanceSummary.vue'
 import VgroupsList from './VgroupsList.vue'
 import ModalPaid from './ModalPaid.vue'
 import { BackendResponse } from '@/types/types';
@@ -69,8 +70,9 @@ onMounted(() => {
     <div class="wrapper">
       <account-detailed v-if="account" :account="account" />
       <agreement-detailed v-if="agreements" :agreement="agreements" :account="account" />
+      <finance-summary :user="props.user"></finance-summary>
+      <vgroups-list v-if="vgroups" :vgroups="vgroups" />
     </div>
-    <vgroups-list v-if="vgroups" :vgroups="vgroups" />
     <modal-paid :payment-details="payment" v-if="payment.status" @closeModal="closePayNotification"></modal-paid>
   </section>
 </template>
@@ -79,7 +81,7 @@ onMounted(() => {
 .wrapper {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  grid-gap: 20px;
+  grid-gap: 10px;
 }
 
 .heading {

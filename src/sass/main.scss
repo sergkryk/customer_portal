@@ -9,3 +9,7 @@
 @use './global/reset' as *;
 @use './global/container' as *;
 // @import './global/headings';
+
+// Components
+//---------------------------------
+@use './components/portal.scss' as *;
