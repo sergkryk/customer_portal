@@ -13,7 +13,7 @@ const amount = ref<number | null>(null)
 // Reactive validation message
 const amountValidationMessage = ref<string>('')
 const isInvalid = ref<boolean>(false)
-
+// function to handle submit
 async function handleSubmit(e: Event) {
   try {
     e.preventDefault()
@@ -21,6 +21,10 @@ async function handleSubmit(e: Event) {
       AgrmId: agrmid,
       OperId: operid,
       Amount: amount.value,
+    }
+
+    if (amount.value === null || amount.value < 0 || amount.value > 10000) {
+      return
     }
 
     const response = await fetch(apiUrl, {
@@ -70,7 +74,7 @@ function removeValidationAlert() {
       <label for="amount" class="payment-form__label" v-if="!isInvalid">Пополнить баланс договора</label>
       <input type="number" id="amount" name="amount" v-model="amount" min="100" max="10000" @input="validateAmount"
         class="payment-form__input" :class="{ 'payment-form__input--invalid': isInvalid }"
-        @blur="removeValidationAlert" />
+        @blur="removeValidationAlert" required/>
     </div>
 
     <!-- Hidden fields for agrmid and operid -->
