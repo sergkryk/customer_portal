@@ -64,9 +64,7 @@ const recommendedAmountToPay = computed(() => {
                     <p class="portal__item-content">{{ activeVgroups.length }}</p>
                 </li>
                 <li class="portal__item">
-                    <h3 class="portal__item-title">Cтоимость платных услуг за {{ nextMonth.toLocaleString('ru-RU', {
-                        month: 'long'
-                    }) }}</h3>
+                    <h3 class="portal__item-title">Cтоимость платных услуг за месяц</h3>
                     <p class="portal__item-content">{{ currencyFormatter.format(allVgroupsAmountSummary) }}</p>
                 </li>
                 <li class="portal__item">
