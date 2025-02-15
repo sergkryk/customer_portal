@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { currencyFormatter } from '@/utils/valuesFormatters'
-import { Agreement } from '@/types/types';
+import { Account, Agreement } from '@/types/types';
 
-const props = defineProps<{ agreement: Agreement }>()
+const props = defineProps<{
+    agreement: Agreement
+    account: Account
+}>()
 //request url
 const apiUrl: URL = new URL(import.meta.env.VITE_API_URL+'/payment' || 'http://localhost:3002/payment')
 
 const { agrmid, operid } = props.agreement
+const { phone, email } = props.account
 // Reactive form data
 const amount = ref<number | null>(null)
 // Reactive validation message
@@ -21,6 +25,8 @@ async function handleSubmit(e: Event) {
       AgrmId: agrmid,
       OperId: operid,
       Amount: amount.value,
+      email: email,
+      phone: phone,
     }
 
     if (amount.value === null || amount.value < 0 || amount.value > 10000) {
@@ -81,6 +87,8 @@ function removeValidationAlert() {
     <div class="payment-form__hidden-fields">
       <input type="hidden" id="agrmid" :value="agrmid" readonly name="agrmid" class="payment-form__hidden-input" />
       <input type="hidden" id="operid" :value="operid" readonly name="operid" class="payment-form__hidden-input" />
+      <input type="hidden" id="phone" :value="phone" readonly name="phone" class="payment-form__hidden-input" />
+      <input type="hidden" id="email" :value="email" readonly name="email" class="payment-form__hidden-input" />
     </div>
 
     <!-- Submit button -->

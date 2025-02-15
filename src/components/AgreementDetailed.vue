@@ -44,7 +44,7 @@ const billingAccountNumber = computed(() => {
                     <p class="portal__item-content">{{ currencyFormatter.format(credit) }}</p>
                 </li>
                 <li class="portal__item">
-                    <payment-form :agreement="props.agreement" />
+                    <payment-form :agreement="props.agreement" :account="props.account" />
                 </li>
             </ul>
         </div>

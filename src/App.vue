@@ -2,13 +2,13 @@
 import { reactive, ref } from 'vue'
 import PortalMain from './components/PortalMain.vue'
 import PortalLogin from './components/PortalLogin.vue'
-import { Account, Agreement, BackendResponse, Vgroup, VgroupAddress } from './types/types';
+import { Account, Agreement, BackendResponse, Vgroup, VgroupAddress, VgroupFull } from './types/types';
 
 const isAuthenticated = ref(false);
 const user = reactive<BackendResponse>({
   account: {} as Account,
   agreements: {} as Agreement,
-  vgroups: {vgroup: {} as Vgroup, addresses: [] as VgroupAddress[]}
+  vgroups: [] as VgroupFull[]
 })
 
 function loginHandler(data: BackendResponse) {
@@ -31,7 +31,3 @@ function logoutHandler() {
     <portal-login v-else @login="loginHandler"></portal-login>
   </div>
 </template>
-
-<style scoped>
-
-</style>

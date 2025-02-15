@@ -17,6 +17,16 @@ export interface PaymentUrlQuery {
   paymentId: string | null
 }
 
+const address: URL = new URL(import.meta.env.VITE_API_URL + '/paymentmodal' || 'http://localhost:3002/client')
+
+const { account, agreements, vgroups } = props.user
+
+const payment: PaymentUrlQuery = reactive({
+  status: false,
+  amount: null,
+  paymentId: null
+})
+
 function isPaymentUrlQuery(candidate: any): candidate is PaymentUrlQuery {
   // Check if 'Success', 'Amount', and 'PaymentId' exist in the URLSearchParams
   return (
@@ -30,33 +40,38 @@ function isPaymentUrlQuery(candidate: any): candidate is PaymentUrlQuery {
   );
 }
 
-const { account, agreements, vgroups } = props.user
-
-const payment: PaymentUrlQuery = reactive({
-  status: false,
-  amount: null,
-  paymentId: null
-})
-
 function closePayNotification(): void {
   payment.status = false,
     payment.amount = null,
     payment.paymentId = null
 }
 
-function showPaymentNotification(urlParams: URLSearchParams): void {
+async function showPaymentNotification(urlParams: URLSearchParams): Promise<void> {
   if (isPaymentUrlQuery(urlParams)) {
     payment.amount = urlParams.get('Amount')
     payment.status = Boolean(urlParams.get('Success'))
     payment.paymentId = urlParams.get('PaymentId')
-    window.history.replaceState({}, '', window.location.pathname);
+    const response = await fetch(address, {
+      method: 'POST',
+      credentials: "include", // This is crucial to send cookies
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payment)
+    })
+    if (response.ok) {
+      const data = await response.json()
+      console.log(data);
+    }
+    // нужно сделать запрос модального окна и показать его если получили подходящий вариант
+    // window.history.replaceState({}, '', window.location.pathname);
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  showPaymentNotification(urlParams)
+  await showPaymentNotification(urlParams)
 });
 </script>
 
@@ -73,7 +88,7 @@ onMounted(() => {
       <finance-summary :user="props.user"></finance-summary>
       <vgroups-list v-if="vgroups" :vgroups="vgroups" />
     </div>
-    <modal-paid :payment-details="payment" v-if="payment.status" @closeModal="closePayNotification"></modal-paid>
+    <!-- <modal-paid :payment-details="payment" v-if="payment.status" @closeModal="closePayNotification"></modal-paid> -->
   </section>
 </template>
 
