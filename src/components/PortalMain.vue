@@ -14,8 +14,8 @@ const emit = defineEmits(['logout']);
 export interface PaymentUrlQuery {
 	status: boolean;
 	receipt_url: string;
-	amount: string | null;
-	paymentId: string | null;
+	amount: string;
+	paymentId: string;
 }
 
 const address: URL = new URL(import.meta.env.VITE_API_URL + '/paymentmodal' || 'http://localhost:3002/client');
@@ -25,8 +25,8 @@ const { account, agreements, vgroups } = props.user;
 const payment: PaymentUrlQuery = reactive({
 	status: false,
 	receipt_url: '',
-	amount: null,
-	paymentId: null,
+	amount: '',
+	paymentId: '',
 });
 function isPaymentUrlQuery(candidate: any): candidate is PaymentUrlQuery {
 	return (
@@ -40,7 +40,7 @@ function isPaymentUrlQuery(candidate: any): candidate is PaymentUrlQuery {
 	);
 }
 function closePayNotification(): void {
-	(payment.status = false), (payment.amount = null), (payment.paymentId = null);
+	(payment.status = false), (payment.amount = ''), (payment.paymentId = '');
 }
 function getVariablesFromUrlQuery(urlParams: URLSearchParams) {
 	const amount = urlParams.get('Amount');
@@ -67,30 +67,33 @@ function updatePayment(data: Omit<PaymentUrlQuery, 'status'>) {
 	payment.receipt_url = data.receipt_url;
 	payment.paymentId = data.paymentId;
 }
-async function showPaymentNotification(urlParams: URLSearchParams): Promise<void> {
-	if (isPaymentUrlQuery(urlParams)) {
-		const response = await fetch(address, {
-			method: 'POST',
-			credentials: 'include', // This is crucial to send cookies
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(getVariablesFromUrlQuery(urlParams)),
-		});
-		if (response.ok) {
-			const data = await response.json();
-			if (isResponseToShowModal(data)) {
-				updatePayment(data);
+async function showPaymentNotification(): Promise<void> {
+	const queryString = window.location.search;
+	if (queryString.length > 0) {
+		console.log(queryString);
+		const urlParams = new URLSearchParams(queryString);
+		if (isPaymentUrlQuery(urlParams)) {
+			const response = await fetch(address, {
+				method: 'POST',
+				credentials: 'include', // This is crucial to send cookies
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(getVariablesFromUrlQuery(urlParams)),
+			});
+			if (response.ok) {
+				const data = await response.json();
+				if (isResponseToShowModal(data)) {
+					updatePayment(data);
+				}
 			}
+			window.history.replaceState({}, '', window.location.pathname);
 		}
-		window.history.replaceState({}, '', window.location.pathname);
 	}
 }
 
 onMounted(async () => {
-	const queryString = window.location.search;
-	const urlParams = new URLSearchParams(queryString);
-	await showPaymentNotification(urlParams);
+	await showPaymentNotification();
 });
 </script>
 
@@ -104,16 +107,20 @@ onMounted(async () => {
 			<account-detailed v-if="account" :account="account" />
 			<agreement-detailed v-if="agreements" :agreement="agreements" :account="account" />
 			<finance-summary :user="props.user"></finance-summary>
-			<vgroups-list v-if="vgroups" :vgroups="vgroups" />
 		</div>
-		<modal-paid :payment-details="payment" v-if="payment.status" @closeModal="closePayNotification"></modal-paid>
+		<vgroups-list v-if="vgroups" :vgroups="vgroups" />
+		<modal-paid
+			:payment-details="{ amount: payment.amount, paymentId: payment.paymentId, receipt_url: payment.receipt_url }"
+			v-if="payment.status"
+			@closeModal="closePayNotification"
+		></modal-paid>
 	</section>
 </template>
 
 <style scoped>
 .wrapper {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
 	grid-gap: 10px;
 }
 

@@ -2,9 +2,8 @@
 import { currencyFormatter } from '@/utils/valuesFormatters';
 const props = defineProps<{
   paymentDetails: {
-    status: boolean,
-    amount: string | null,
-    paymentId: string | null,
+    amount: string
+    paymentId: string
     receipt_url: string
   }
 }>()
@@ -20,8 +19,8 @@ function handleClick() {
 <template>
   <div class="modal-overlay">
     <div class="modal">
-      <p>Платеж с номером {{ props.paymentDetails.paymentId }} на сумму {{ currencyFormatter.format(Number(props.paymentDetails.amount) / 100) }} поступил на ваш счёт.</p>
-      <a :href="props.paymentDetails.receipt_url" target="_blank" rel="noopener noreferrer">Посмотреть фискальный чек</a>
+      <p class="modal__text">Платеж с номером {{ props.paymentDetails.paymentId }} на сумму {{ currencyFormatter.format(Number(props.paymentDetails.amount) / 100) }} поступил на ваш счёт.</p>
+      <a :href="props.paymentDetails.receipt_url" target="_blank" rel="noopener noreferrer" class="modal__link">фискальный чек</a>
       <button @click="handleClick" class="close-btn">Закрыть</button>
     </div>
   </div>
@@ -30,6 +29,7 @@ function handleClick() {
 <style scoped lang="scss">
 /* Modal overlay (background) */
 .modal-overlay {
+  --size: clamp(1rem, 2vw, 1.5rem);
   position: fixed;
   top: 0;
   left: 0;
@@ -45,20 +45,31 @@ function handleClick() {
 /* Modal content */
 .modal {
   background: var(--color-white);
-  padding: 20px 30px;
+  padding: calc(var(--size)* 1.2);
   border-radius: 8px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  width: 90%;
+  width: 80vw;
   max-width: 400px;
   text-align: center;
   animation: fadeIn 0.3s ease-out;
 }
 
 /* Modal Text */
-.modal p {
-  font-size: 16px;
+.modal__text {
+  font-size: var(--size);
+  line-height: calc(var(--size)* 1.2);
   color: #333;
-  margin-bottom: 20px;
+  margin: 0;
+  margin-bottom: var(--size);
+}
+
+.modal__link {
+  font-size: calc(var(--size)*.9);
+  line-height: calc(var(--size)*1);
+  margin-bottom: calc(var(--size)*1);
+  display: block;
+  color: var(--site-blue);
+  text-decoration: underline;
 }
 
 /* Close Button */

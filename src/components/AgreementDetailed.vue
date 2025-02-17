@@ -43,7 +43,7 @@ const billingAccountNumber = computed(() => {
                     <h3 class="portal__item-title">Доступный кредит по договору</h3>
                     <p class="portal__item-content">{{ currencyFormatter.format(credit) }}</p>
                 </li>
-                <li class="portal__item">
+                <li class="portal__item portal__item--no-border">
                     <payment-form :agreement="props.agreement" :account="props.account" />
                 </li>
             </ul>
