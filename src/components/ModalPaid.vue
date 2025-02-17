@@ -4,7 +4,8 @@ const props = defineProps<{
   paymentDetails: {
     status: boolean,
     amount: string | null,
-    paymentId: string | null
+    paymentId: string | null,
+    receipt_url: string
   }
 }>()
 
@@ -19,7 +20,8 @@ function handleClick() {
 <template>
   <div class="modal-overlay">
     <div class="modal">
-      <p>Платеж с номером {{ props.paymentDetails.paymentId }} на сумму {{ currencyFormatter.format(Number(props.paymentDetails.amount) / 100) }} поступил на ваш счёт</p>
+      <p>Платеж с номером {{ props.paymentDetails.paymentId }} на сумму {{ currencyFormatter.format(Number(props.paymentDetails.amount) / 100) }} поступил на ваш счёт.</p>
+      <a :href="props.paymentDetails.receipt_url" target="_blank" rel="noopener noreferrer">Посмотреть фискальный чек</a>
       <button @click="handleClick" class="close-btn">Закрыть</button>
     </div>
   </div>

@@ -1,114 +1,132 @@
 <script setup lang="ts">
-import AccountDetailed from './AccountDetailed.vue'
-import AgreementDetailed from './AgreementDetailed.vue'
-import FinanceSummary from './FinanceSummary.vue'
-import VgroupsList from './VgroupsList.vue'
-import ModalPaid from './ModalPaid.vue'
+import AccountDetailed from './AccountDetailed.vue';
+import AgreementDetailed from './AgreementDetailed.vue';
+import FinanceSummary from './FinanceSummary.vue';
+import VgroupsList from './VgroupsList.vue';
+import ModalPaid from './ModalPaid.vue';
 import { BackendResponse } from '@/types/types';
 import { onMounted, reactive } from 'vue';
 import LogoutButton from './LogoutButton.vue';
 
-const props = defineProps<{ user: BackendResponse }>()
+const props = defineProps<{ user: BackendResponse }>();
 const emit = defineEmits(['logout']);
 
 export interface PaymentUrlQuery {
-  status: boolean,
-  amount: string | null,
-  paymentId: string | null
+	status: boolean;
+	receipt_url: string;
+	amount: string | null;
+	paymentId: string | null;
 }
 
-const address: URL = new URL(import.meta.env.VITE_API_URL + '/paymentmodal' || 'http://localhost:3002/client')
+const address: URL = new URL(import.meta.env.VITE_API_URL + '/paymentmodal' || 'http://localhost:3002/client');
 
-const { account, agreements, vgroups } = props.user
+const { account, agreements, vgroups } = props.user;
 
 const payment: PaymentUrlQuery = reactive({
-  status: false,
-  amount: null,
-  paymentId: null
-})
-
+	status: false,
+	receipt_url: '',
+	amount: null,
+	paymentId: null,
+});
 function isPaymentUrlQuery(candidate: any): candidate is PaymentUrlQuery {
-  // Check if 'Success', 'Amount', and 'PaymentId' exist in the URLSearchParams
-  return (
-    candidate instanceof URLSearchParams &&
-    candidate.has('Success') &&
-    candidate.has('Amount') &&
-    candidate.has('PaymentId') &&
-    typeof candidate.get('Success') === 'string' && // `get` returns a string
-    typeof candidate.get('Amount') === 'string' &&
-    typeof candidate.get('PaymentId') === 'string'
-  );
+	return (
+		candidate instanceof URLSearchParams &&
+		candidate.has('Success') &&
+		candidate.has('Amount') &&
+		candidate.has('PaymentId') &&
+		typeof candidate.get('Success') === 'string' &&
+		typeof candidate.get('Amount') === 'string' &&
+		typeof candidate.get('PaymentId') === 'string'
+	);
 }
-
 function closePayNotification(): void {
-  payment.status = false,
-    payment.amount = null,
-    payment.paymentId = null
+	(payment.status = false), (payment.amount = null), (payment.paymentId = null);
 }
-
+function getVariablesFromUrlQuery(urlParams: URLSearchParams) {
+	const amount = urlParams.get('Amount');
+	const status = Boolean(urlParams.get('Success'));
+	const paymentId = urlParams.get('PaymentId');
+	return {
+		amount,
+		status,
+		paymentId,
+	};
+}
+function isResponseToShowModal(candidate: any) {
+	return (
+		typeof candidate === 'object' &&
+		candidate !== null &&
+		'amount' in candidate &&
+		'receipt_url' in candidate &&
+		'paymentId' in candidate
+	);
+}
+function updatePayment(data: Omit<PaymentUrlQuery, 'status'>) {
+	payment.status = true;
+	payment.amount = data.amount;
+	payment.receipt_url = data.receipt_url;
+	payment.paymentId = data.paymentId;
+}
 async function showPaymentNotification(urlParams: URLSearchParams): Promise<void> {
-  if (isPaymentUrlQuery(urlParams)) {
-    payment.amount = urlParams.get('Amount')
-    payment.status = Boolean(urlParams.get('Success'))
-    payment.paymentId = urlParams.get('PaymentId')
-    const response = await fetch(address, {
-      method: 'POST',
-      credentials: "include", // This is crucial to send cookies
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payment)
-    })
-    if (response.ok) {
-      const data = await response.json()
-      console.log(data);
-    }
-    // нужно сделать запрос модального окна и показать его если получили подходящий вариант
-    // window.history.replaceState({}, '', window.location.pathname);
-  }
+	if (isPaymentUrlQuery(urlParams)) {
+		const response = await fetch(address, {
+			method: 'POST',
+			credentials: 'include', // This is crucial to send cookies
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(getVariablesFromUrlQuery(urlParams)),
+		});
+		if (response.ok) {
+			const data = await response.json();
+			if (isResponseToShowModal(data)) {
+				updatePayment(data);
+			}
+		}
+		window.history.replaceState({}, '', window.location.pathname);
+	}
 }
 
 onMounted(async () => {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  await showPaymentNotification(urlParams)
+	const queryString = window.location.search;
+	const urlParams = new URLSearchParams(queryString);
+	await showPaymentNotification(urlParams);
 });
 </script>
 
-
 <template>
-  <section>
-    <div class="heading">
-      <h1>Личный кабинет</h1>
-      <logout-button @logout="emit('logout')"></logout-button>
-    </div>
-    <div class="wrapper">
-      <account-detailed v-if="account" :account="account" />
-      <agreement-detailed v-if="agreements" :agreement="agreements" :account="account" />
-      <finance-summary :user="props.user"></finance-summary>
-      <vgroups-list v-if="vgroups" :vgroups="vgroups" />
-    </div>
-    <!-- <modal-paid :payment-details="payment" v-if="payment.status" @closeModal="closePayNotification"></modal-paid> -->
-  </section>
+	<section>
+		<div class="heading">
+			<h1>Личный кабинет</h1>
+			<logout-button @logout="emit('logout')"></logout-button>
+		</div>
+		<div class="wrapper">
+			<account-detailed v-if="account" :account="account" />
+			<agreement-detailed v-if="agreements" :agreement="agreements" :account="account" />
+			<finance-summary :user="props.user"></finance-summary>
+			<vgroups-list v-if="vgroups" :vgroups="vgroups" />
+		</div>
+		<modal-paid :payment-details="payment" v-if="payment.status" @closeModal="closePayNotification"></modal-paid>
+	</section>
 </template>
 
 <style scoped>
 .wrapper {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  grid-gap: 10px;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+	grid-gap: 10px;
 }
 
 .heading {
-  padding: clamp(1rem, 2vw, 2rem) 0;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+	padding: clamp(1rem, 2vw, 2rem) 0;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
 }
 
 h1 {
-  margin: 0;
+	margin: 0;
 }
 </style>
 
